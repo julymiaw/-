@@ -84,6 +84,16 @@ optimizer = optim.Adam(model.parameters())
 # 控制进度条显示的参数
 show_progress = True
 
+# 保存最佳模型的参数
+best_accuracy = 0.0
+best_model_path = "best_model.pth"
+
+# 打印基本信息
+print(f"Total training samples: {len(train_dataset)}")
+print(f"Total validation samples: {len(test_dataset)}")
+print(f"Total training batches: {len(train_loader)}")
+print(f"Total validation batches: {len(test_loader)}")
+
 # 训练循环
 num_epochs = 10  # 设置训练的轮数
 for epoch in range(num_epochs):
@@ -126,4 +136,11 @@ for epoch in range(num_epochs):
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
 
-    print(f"Accuracy of the model on the test images: {100 * correct / total}%")
+    accuracy = 100 * correct / total
+    print(f"Accuracy of the model on the test images: {accuracy}%")
+
+    # 保存最佳模型
+    if accuracy > best_accuracy:
+        best_accuracy = accuracy
+        torch.save(model.state_dict(), best_model_path)
+        print(f"Best model saved with accuracy: {best_accuracy}%")
